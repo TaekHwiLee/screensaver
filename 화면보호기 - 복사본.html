@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>화면 보호기</title>
+<style>
+  body {
+    overflow: hidden;
+    margin: 0;
+    background-color: white;
+  }
+  .circle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.5;
+  }
+</style>
+</head>
+<body>
+<script>
+  const colors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'mint'];
+  let circles = [];
+
+  function createCircle() {
+    const circle = document.createElement('div');
+    const size = Math.random() * 100 + 20; // 크기 20px에서 120px 사이
+    const x = Math.random() * (window.innerWidth - size);
+    const y = Math.random() * (window.innerHeight - size);
+    const color = colors[Math.floor(Math.random() * colors.length)];
+
+    circle.classList.add('circle');
+    circle.style.width = `${size}px`;
+    circle.style.height = `${size}px`;
+    circle.style.left = `${x}px`;
+    circle.style.top = `${y}px`;
+    circle.style.backgroundColor = color;
+
+    document.body.appendChild(circle);
+
+    // 움직임과 관련된 속성
+    circle.vx = Math.random() * 2 - 1; // -1에서 1 사이의 속도
+    circle.vy = Math.random() * 2 - 1; // -1에서 1 사이의 속도
+
+    circles.push(circle);
+
+    setTimeout(() => {
+      circle.remove();
+      circles = circles.filter(c => c !== circle);
+    }, 30000); // 30초 후 사라짐
+  }
+
+  function update() {
+    circles.forEach(circle => {
+      let newX = parseFloat(circle.style.left) + circle.vx;
+      let newY = parseFloat(circle.style.top) + circle.vy;
+
+      // 화면 경계에 부딪히면 방향 반전
+      if (newX <= 0 || newX + parseFloat(circle.style.width) >= window.innerWidth) {
+        circle.vx *= -1;
+      }
+      if (newY <= 0 || newY + parseFloat(circle.style.height) >= window.innerHeight) {
+        circle.vy *= -1;
+      }
+
+      circle.style.left = `${newX}px`;
+      circle.style.top = `${newY}px`;
+    });
+
+    requestAnimationFrame(update);
+  }
+
+  setInterval(createCircle, 2000); // 2초마다 동그라미 생성
+  requestAnimationFrame(update); // 움직임 업데이트
+
+</script>
+</body>
+</html>
